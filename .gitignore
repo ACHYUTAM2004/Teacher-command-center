@@ -1,0 +1,27 @@
+# Environments & virtualenvs
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Node caches
+node_modules/
+.next/
+dist/
+build/
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
