@@ -1,0 +1,797 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Teacher Command Center API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflows": {
+      "post": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Create Workflow",
+        "operationId": "create_workflow_api_v1_workflows_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkflowRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflows/{workflow_id}": {
+      "get": {
+        "tags": [
+          "Workflows"
+        ],
+        "summary": "Get Workflow Package",
+        "operationId": "get_workflow_package_api_v1_workflows__workflow_id__get",
+        "parameters": [
+          {
+            "name": "workflow_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Workflow Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkflowPackageResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssessmentItem": {
+        "properties": {
+          "item_number": {
+            "type": "integer",
+            "title": "Item Number"
+          },
+          "question_type": {
+            "type": "string",
+            "title": "Question Type",
+            "description": "multiple_choice, short_answer, calculation"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "correct_answer": {
+            "type": "string",
+            "title": "Correct Answer"
+          },
+          "points": {
+            "type": "integer",
+            "title": "Points"
+          },
+          "mapped_objective": {
+            "type": "string",
+            "title": "Mapped Objective"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_number",
+          "question_type",
+          "prompt",
+          "correct_answer",
+          "points",
+          "mapped_objective"
+        ],
+        "title": "AssessmentItem"
+      },
+      "AssessmentSchema": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "total_points": {
+            "type": "integer",
+            "title": "Total Points"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AssessmentItem"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "total_points",
+          "items"
+        ],
+        "title": "AssessmentSchema"
+      },
+      "CreateWorkflowRequest": {
+        "properties": {
+          "class_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Id",
+            "description": "Linked classroom profile ID"
+          },
+          "grade": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 6.0,
+            "title": "Grade",
+            "description": "Target grade level (MVP: 6-8)"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject",
+            "description": "Subject area (MVP: Science)",
+            "default": "Science"
+          },
+          "topic": {
+            "type": "string",
+            "title": "Topic",
+            "description": "Specific topic, e.g., 'Newton's Second Law'"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes",
+            "description": "Total lesson duration in minutes",
+            "default": 50
+          },
+          "class_size": {
+            "type": "integer",
+            "title": "Class Size",
+            "description": "Total number of students",
+            "default": 28
+          },
+          "activity_type": {
+            "type": "string",
+            "title": "Activity Type",
+            "description": "e.g., 'Hands-on Lab'"
+          },
+          "learning_objective": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Learning Objective",
+            "description": "Optional custom learning objective"
+          },
+          "available_equipment": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Available Equipment",
+            "description": "e.g., ['Dynamics Carts', 'Spring Scales', '200g Masses']"
+          },
+          "accommodations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Accommodations",
+            "description": "e.g., ['Formula triangles', 'Sentence starters']"
+          },
+          "deliverables": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Deliverables",
+            "description": "Requested output document types",
+            "default": [
+              "lesson_plan",
+              "worksheet",
+              "differentiated_worksheet",
+              "assessment",
+              "rubric"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "grade",
+          "topic",
+          "activity_type"
+        ],
+        "title": "CreateWorkflowRequest"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LessonPlanSchema": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "grade": {
+            "type": "integer",
+            "title": "Grade"
+          },
+          "subject": {
+            "type": "string",
+            "title": "Subject"
+          },
+          "total_duration_minutes": {
+            "type": "integer",
+            "title": "Total Duration Minutes"
+          },
+          "learning_objectives": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Learning Objectives"
+          },
+          "standards": {
+            "items": {
+              "$ref": "#/components/schemas/StandardMapping"
+            },
+            "type": "array",
+            "title": "Standards"
+          },
+          "required_materials": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Required Materials"
+          },
+          "safety_precautions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Safety Precautions"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineBlock"
+            },
+            "type": "array",
+            "title": "Timeline"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "grade",
+          "subject",
+          "total_duration_minutes",
+          "learning_objectives",
+          "standards",
+          "required_materials",
+          "safety_precautions",
+          "timeline"
+        ],
+        "title": "LessonPlanSchema"
+      },
+      "QAReportSchema": {
+        "properties": {
+          "deterministic_passed": {
+            "type": "boolean",
+            "title": "Deterministic Passed"
+          },
+          "standard_verified": {
+            "type": "boolean",
+            "title": "Standard Verified"
+          },
+          "duration_matches": {
+            "type": "boolean",
+            "title": "Duration Matches"
+          },
+          "rubric_points_valid": {
+            "type": "boolean",
+            "title": "Rubric Points Valid"
+          },
+          "equipment_available": {
+            "type": "boolean",
+            "title": "Equipment Available"
+          },
+          "ai_critic_passed": {
+            "type": "boolean",
+            "title": "Ai Critic Passed"
+          },
+          "grade_appropriate": {
+            "type": "boolean",
+            "title": "Grade Appropriate"
+          },
+          "scope_aligned": {
+            "type": "boolean",
+            "title": "Scope Aligned"
+          },
+          "revision_notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Revision Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deterministic_passed",
+          "standard_verified",
+          "duration_matches",
+          "rubric_points_valid",
+          "equipment_available",
+          "ai_critic_passed",
+          "grade_appropriate",
+          "scope_aligned"
+        ],
+        "title": "QAReportSchema"
+      },
+      "RubricCriterion": {
+        "properties": {
+          "criterion_name": {
+            "type": "string",
+            "title": "Criterion Name"
+          },
+          "weight_points": {
+            "type": "integer",
+            "title": "Weight Points"
+          },
+          "level_4_exemplary": {
+            "type": "string",
+            "title": "Level 4 Exemplary"
+          },
+          "level_3_proficient": {
+            "type": "string",
+            "title": "Level 3 Proficient"
+          },
+          "level_2_developing": {
+            "type": "string",
+            "title": "Level 2 Developing"
+          },
+          "level_1_beginning": {
+            "type": "string",
+            "title": "Level 1 Beginning"
+          }
+        },
+        "type": "object",
+        "required": [
+          "criterion_name",
+          "weight_points",
+          "level_4_exemplary",
+          "level_3_proficient",
+          "level_2_developing",
+          "level_1_beginning"
+        ],
+        "title": "RubricCriterion"
+      },
+      "RubricSchema": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "total_points": {
+            "type": "integer",
+            "title": "Total Points"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/RubricCriterion"
+            },
+            "type": "array",
+            "title": "Criteria"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "total_points",
+          "criteria"
+        ],
+        "title": "RubricSchema"
+      },
+      "StandardMapping": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Official standard code, e.g., NGSS-MS-PS2-2"
+          },
+          "framework": {
+            "type": "string",
+            "title": "Framework",
+            "description": "Curriculum framework, e.g., NGSS"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "alignment_rationale": {
+            "type": "string",
+            "title": "Alignment Rationale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "framework",
+          "description",
+          "alignment_rationale"
+        ],
+        "title": "StandardMapping"
+      },
+      "TimelineBlock": {
+        "properties": {
+          "phase_name": {
+            "type": "string",
+            "title": "Phase Name",
+            "description": "e.g., Hook, Direct Instruction, Lab Activity, Wrap-Up"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          },
+          "teacher_actions": {
+            "type": "string",
+            "title": "Teacher Actions"
+          },
+          "student_actions": {
+            "type": "string",
+            "title": "Student Actions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "phase_name",
+          "duration_minutes",
+          "teacher_actions",
+          "student_actions"
+        ],
+        "title": "TimelineBlock"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkflowPackageResponse": {
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "lesson_plan": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LessonPlanSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "worksheet": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorksheetSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "differentiated_worksheet": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/WorksheetSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "assessment": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AssessmentSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rubric": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RubricSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "qa_report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QAReportSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "workflow_id",
+          "status"
+        ],
+        "title": "WorkflowPackageResponse"
+      },
+      "WorkflowResponse": {
+        "properties": {
+          "workflow_id": {
+            "type": "string",
+            "title": "Workflow Id"
+          },
+          "run_id": {
+            "type": "string",
+            "title": "Run Id"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "current_step": {
+            "type": "string",
+            "title": "Current Step"
+          }
+        },
+        "type": "object",
+        "required": [
+          "workflow_id",
+          "run_id",
+          "status",
+          "current_step"
+        ],
+        "title": "WorkflowResponse"
+      },
+      "WorksheetQuestion": {
+        "properties": {
+          "question_number": {
+            "type": "integer",
+            "title": "Question Number"
+          },
+          "prompt": {
+            "type": "string",
+            "title": "Prompt"
+          },
+          "mapped_objective": {
+            "type": "string",
+            "title": "Mapped Objective"
+          },
+          "scaffold_hint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scaffold Hint",
+            "description": "Populated for differentiated/IEP versions"
+          },
+          "sentence_starter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sentence Starter",
+            "description": "Populated for differentiated/IEP versions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_number",
+          "prompt",
+          "mapped_objective"
+        ],
+        "title": "WorksheetQuestion"
+      },
+      "WorksheetSchema": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "is_differentiated": {
+            "type": "boolean",
+            "title": "Is Differentiated",
+            "default": false
+          },
+          "applied_accommodations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Applied Accommodations"
+          },
+          "instructions": {
+            "type": "string",
+            "title": "Instructions"
+          },
+          "materials_checklist": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Materials Checklist"
+          },
+          "data_table_headers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Data Table Headers"
+          },
+          "questions": {
+            "items": {
+              "$ref": "#/components/schemas/WorksheetQuestion"
+            },
+            "type": "array",
+            "title": "Questions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "instructions",
+          "materials_checklist",
+          "questions"
+        ],
+        "title": "WorksheetSchema"
+      }
+    }
+  }
+}
