@@ -202,38 +202,37 @@
           },
           "grade": {
             "type": "integer",
-            "maximum": 8.0,
-            "minimum": 6.0,
+            "maximum": 12.0,
+            "minimum": 1.0,
             "title": "Grade",
-            "description": "Target grade level (MVP: 6-8)"
+            "description": "Target grade level (1-12)"
           },
           "subject": {
             "type": "string",
             "title": "Subject",
-            "description": "Subject area (MVP: Science)",
-            "default": "Science"
+            "description": "Subject area (e.g., Science, Mathematics, Social Science)"
           },
           "topic": {
             "type": "string",
             "title": "Topic",
-            "description": "Specific topic, e.g., 'Newton's Second Law'"
+            "description": "Specific topic, e.g., 'Light - Reflection and Refraction'"
           },
           "duration_minutes": {
             "type": "integer",
             "title": "Duration Minutes",
-            "description": "Total lesson duration in minutes",
-            "default": 50
+            "description": "Total lesson duration in minutes (standard Indian period)",
+            "default": 40
           },
           "class_size": {
             "type": "integer",
             "title": "Class Size",
-            "description": "Total number of students",
-            "default": 28
+            "description": "Total number of students (standard Indian classroom)",
+            "default": 40
           },
           "activity_type": {
             "type": "string",
             "title": "Activity Type",
-            "description": "e.g., 'Hands-on Lab'"
+            "description": "e.g., 'Direct Instruction', 'Lab Activity'"
           },
           "learning_objective": {
             "anyOf": [
@@ -253,7 +252,7 @@
             },
             "type": "array",
             "title": "Available Equipment",
-            "description": "e.g., ['Dynamics Carts', 'Spring Scales', '200g Masses']"
+            "description": "e.g., ['Convex lenses', 'Glass prisms']"
           },
           "accommodations": {
             "items": {
@@ -261,7 +260,7 @@
             },
             "type": "array",
             "title": "Accommodations",
-            "description": "e.g., ['Formula triangles', 'Sentence starters']"
+            "description": "e.g., ['Bilingual Hindi/English vocabulary definitions']"
           },
           "deliverables": {
             "items": {
@@ -282,6 +281,7 @@
         "type": "object",
         "required": [
           "grade",
+          "subject",
           "topic",
           "activity_type"
         ],
@@ -492,12 +492,12 @@
           "code": {
             "type": "string",
             "title": "Code",
-            "description": "Official standard code, e.g., NGSS-MS-PS2-2"
+            "description": "Official standard code, e.g., NCERT-SCI-10-Light"
           },
           "framework": {
             "type": "string",
             "title": "Framework",
-            "description": "Curriculum framework, e.g., NGSS"
+            "description": "Curriculum framework, e.g., NCERT, CBSE, ICSE"
           },
           "description": {
             "type": "string",

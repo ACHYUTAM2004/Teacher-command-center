@@ -4,8 +4,8 @@ from typing import List, Optional, Dict
 # --- 1. Sub-Schemas for Structured Educational Deliverables ---
 
 class StandardMapping(BaseModel):
-    code: str = Field(..., description="Official standard code, e.g., NGSS-MS-PS2-2")
-    framework: str = Field(..., description="Curriculum framework, e.g., NGSS")
+    code: str = Field(..., description="Official standard code, e.g., NCERT-SCI-10-Light")
+    framework: str = Field(..., description="Curriculum framework, e.g., NCERT, CBSE, ICSE")
     description: str
     alignment_rationale: str
 
@@ -84,15 +84,15 @@ class QAReportSchema(BaseModel):
 
 class CreateWorkflowRequest(BaseModel):
     class_id: Optional[str] = Field(None, description="Linked classroom profile ID")
-    grade: int = Field(..., ge=6, le=8, description="Target grade level (MVP: 6-8)")
-    subject: str = Field("Science", description="Subject area (MVP: Science)")
-    topic: str = Field(..., description="Specific topic, e.g., 'Newton's Second Law'")
-    duration_minutes: int = Field(50, description="Total lesson duration in minutes")
-    class_size: int = Field(28, description="Total number of students")
-    activity_type: str = Field(..., description="e.g., 'Hands-on Lab'")
+    grade: int = Field(..., ge=1, le=12, description="Target grade level (1-12)")
+    subject: str = Field(..., description="Subject area (e.g., Science, Mathematics, Social Science)")
+    topic: str = Field(..., description="Specific topic, e.g., 'Light - Reflection and Refraction'")
+    duration_minutes: int = Field(40, description="Total lesson duration in minutes (standard Indian period)")
+    class_size: int = Field(40, description="Total number of students (standard Indian classroom)")
+    activity_type: str = Field(..., description="e.g., 'Direct Instruction', 'Lab Activity'")
     learning_objective: Optional[str] = Field(None, description="Optional custom learning objective")
-    available_equipment: List[str] = Field(default_factory=list, description="e.g., ['Dynamics Carts', 'Spring Scales', '200g Masses']")
-    accommodations: List[str] = Field(default_factory=list, description="e.g., ['Formula triangles', 'Sentence starters']")
+    available_equipment: List[str] = Field(default_factory=list, description="e.g., ['Convex lenses', 'Glass prisms']")
+    accommodations: List[str] = Field(default_factory=list, description="e.g., ['Bilingual Hindi/English vocabulary definitions']")
     deliverables: List[str] = Field(
         default=["lesson_plan", "worksheet", "differentiated_worksheet", "assessment", "rubric"],
         description="Requested output document types"
