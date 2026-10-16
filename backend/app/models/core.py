@@ -5,6 +5,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from app.models.base import Base
+from pgvector.sqlalchemy import Vector
+from sqlalchemy.orm import relationship, Mapped, mapped_column
+from pgvector.sqlalchemy import Vector
 
 def generate_uuid() -> str:
     return str(uuid.uuid4())
@@ -155,3 +158,15 @@ class Dependency(Base):
     source_entity = Column(String, nullable=False)  # e.g., "available_equipment" or "lesson_plan"
     target_document_id = Column(String, ForeignKey("documents.id", ondelete="CASCADE"), nullable=False)
     shared_reference_key = Column(String, nullable=False)  # e.g., "lab_masses"
+
+class ResourceChunk(Base):
+    __tablename__ = "resource_chunks"
+
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    resource_id: Mapped[str] = mapped_column(ForeignKey("resources.id", ondelete="CASCADE"), index=True)
+    grade: Mapped[int] = mapped_column(Integer, index=True)
+    subject: Mapped[str] = mapped_column(String, index=True)
+    chunk_index: Mapped[int] = mapped_column(Integer)
+    page_number: Mapped[int] = mapped_column(Integer, default=1)
+    content: Mapped[str] = mapped_column(Text)
+    embedding: Mapped[list[float]] = mapped_column(Vector(384))
