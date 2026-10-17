@@ -1,0 +1,1 @@
+uv run --directory backend python scripts/export_openapi.py
